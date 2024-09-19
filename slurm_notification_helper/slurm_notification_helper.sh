@@ -12,7 +12,9 @@ send_telegram_message() {
     curl -H 'Content-Type: application/json' \
          -d "{\"chat_id\":$TELEGRAM_CHAT_ID, \"text\":\"$message\"}" \
          -X POST \
-         "https://api.telegram.org/bot$TELEGRAM_BOT_API_KEY/sendMessage"
+         "https://api.telegram.org/bot$TELEGRAM_BOT_API_KEY/sendMessage" \
+         > /dev/null 2>&1
+
 }
 
 # Function to execute a command and handle success/failure
