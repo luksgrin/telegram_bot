@@ -14,30 +14,15 @@ send_telegram_message() {
          -X POST \
          "https://api.telegram.org/bot$TELEGRAM_BOT_API_KEY/sendMessage" \
          > /dev/null 2>&1
-
 }
 
 # Function to execute a command and handle success/failure
-# Note that the command has to be passed as a string
 run_with_notification() {
-    local cmd="$1"
-
-    # Function to handle job failure
-    handle_failure() {
-        send_telegram_message "Your job in garnatxa has failed or was interrupted."
-        exit 1
-    }
-
-    # Function to handle job success
-    handle_success() {
-        send_telegram_message "Your job in garnatxa has completed successfully."
-    }
-
     # Trap signals for failure or job interruption
     trap handle_failure ERR TERM
 
-    # Run the command
-    eval "$cmd"
+    # Execute the command directly
+    $@  # This runs the command with all passed arguments
     COMMAND_EXIT_CODE=$?  # Capture the exit code
 
     # Handle success/failure based on the exit code
@@ -46,5 +31,16 @@ run_with_notification() {
     else
         handle_failure
     fi
+}
+
+# Function to handle job failure
+handle_failure() {
+    send_telegram_message "Your job in garnatxa has failed or was interrupted."
+    exit 1
+}
+
+# Function to handle job success
+handle_success() {
+    send_telegram_message "Your job in garnatxa has completed successfully."
 }
 
